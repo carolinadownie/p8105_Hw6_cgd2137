@@ -5,13 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "1589396547",
+    "hash" : "2478408223",
     "id" : "1D5ACFE9",
-    "lastKnownWriteTime" : 1510344842,
-    "last_content_update" : 1510344842975,
+    "lastKnownWriteTime" : 1510344999,
+    "last_content_update" : 1510344999371,
     "path" : "~/Documents/Columbia/Semester3/Data Science/Homeworks/p8105_hw6_cgd2137/p8105_hw6_cgd2137_Prob1.Rmd",
     "project_path" : "p8105_hw6_cgd2137_Prob1.Rmd",
     "properties" : {
+        "cursorPosition" : "34,43",
+        "scrollLine" : "21",
         "tempName" : "Untitled1"
     },
     "relative_order" : 1,

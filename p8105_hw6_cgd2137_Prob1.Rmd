@@ -10,12 +10,66 @@ output:
 library(flexdashboard)
 ```
 
+```{r setup, include=FALSE}
+
+library(flexdashboard)
+library(tidyverse)
+library(janitor)
+library(stringr)
+library(forcats)
+library(viridis)
+library(plotly)
+
+```
+
+NYC Restaurant Inspection Data set possible questions/analyses:
+
+* Does restaurant grade distribution vary across boroughs? 
+
+* How do restaurant grade/inspections vary across types of restaurants? 
+
+* What types of violations are most/least common? (how does this vary across grades?)
+
+
+```{r loading and cleaning }
+nyc_restaurant_inspections <- read_csv("../data_hw6/DOHMH_New_York_City_Restaurant_Inspection_Results.csv", col_names = TRUE) %>% 
+  rename(restaurant_id = camis, restaurant_name = dba) %>% 
+  filter(is.na(grade) == FALSE)
+```
+
+Your dashboard should include at least three distinct plot types (e.g. scatterplots, line plots, bar plots, box plots, etc.).
+
+
+
 Column {data-width=650}
 -----------------------------------------------------------------------
 
 ### Chart A
 
 ```{r}
+# put plotly code in these code chunks to specify the dashboard orientation/plots
+
+nyc_restaurant_inspections %>% 
+  filter(grade %in% c("A", "B", "C")) %>%
+  select(cuisine_description, grade) %>%
+  group_by(cuisine_description) %>%
+  count(grade) %>%
+  spread(key = grade, value = n) %>%
+  plot_ly(x = ~cuisine_description, y = ~A, type = 'bar', name = 'A') %>%
+  add_trace(y = ~B, name = 'B') %>%
+  layout(yaxis = list(title = 'Count'), barmode = 'stack') %>%
+  add_trace(y = ~C, name = 'C') %>%
+  layout(yaxis = list(title = 'Count'), barmode = 'stack')
+
+
+
+
+
+  
+  
+
+
+
 
 ```
 
