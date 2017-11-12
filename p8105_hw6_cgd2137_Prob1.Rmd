@@ -1,14 +1,10 @@
 ---
-title: "Untitled"
+title: "p8105_hw6_Prob1"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
 ---
-
-```{r setup, include=FALSE}
-library(flexdashboard)
-```
 
 ```{r setup, include=FALSE}
 
@@ -25,6 +21,8 @@ library(plotly)
 NYC Restaurant Inspection Data set possible questions/analyses:
 
 * Does restaurant grade distribution vary across boroughs? 
+
+* Do restaurant types vary across boroughs? 
 
 * How do restaurant grade/inspections vary across types of restaurants? 
 
@@ -62,15 +60,7 @@ nyc_restaurant_inspections %>%
   layout(yaxis = list(title = 'Count'), barmode = 'stack')
 
 
-
-
-
-  
-  
-
-
-
-
+#How can we improve the axis labels?--hard to read 
 ```
 
 Column {data-width=350}
@@ -80,6 +70,17 @@ Column {data-width=350}
 
 ```{r}
 
+filter(nyc_restaurant_inspections, boro == "Missing")
+
+ nyc_restaurant_inspections %>%
+  filter(boro != "Missing") %>%
+  group_by(zipcode) %>%
+  mutate(num_restaurants_zip = n()) %>%
+  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
+  plot_ly(y = ~num_restaurants_zip, color = ~boro, type = "box")
+  
+
+#I want the hover label to indicate the zip code corresponding to the number of restaurants, not the boro name, since that is already known--need to fix this
 ```
 
 ### Chart C
