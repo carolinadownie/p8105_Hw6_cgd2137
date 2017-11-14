@@ -65,7 +65,7 @@ get_all_inspections <- function(url) {
 
 url = "https://data.cityofnewyork.us/resource/9w7m-hzhe.json"
 
-nyc_inspections <- get_all_inspections(url) %>%
+nyc_restaurant_inspections <- get_all_inspections(url) %>%
   bind_rows() %>%
   rename(restaurant_id = camis, restaurant_name = dba) %>%
   filter(is.na(grade) == FALSE)
@@ -91,9 +91,9 @@ nyc_restaurant_inspections %>%
   spread(key = grade, value = n) %>%
   plot_ly(x = ~cuisine_description, y = ~A, type = 'bar', name = 'A') %>%
   add_trace(y = ~B, name = 'B') %>%
-  layout(yaxis = list(title = 'Count'), barmode = 'stack') %>%
   add_trace(y = ~C, name = 'C') %>%
-  layout(yaxis = list(title = 'Count'), barmode = 'stack')
+  layout(yaxis = list(title = 'Count'), barmode = 'stack') %>% 
+  layout(xaxis = list(title = "", tickangle = 45)) # This line adjusts the angle of the x-axis labels by 45 degrees
 
 
 #How can we improve the axis labels?--hard to read 
