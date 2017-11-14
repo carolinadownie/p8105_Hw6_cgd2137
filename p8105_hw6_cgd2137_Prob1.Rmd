@@ -15,6 +15,8 @@ library(stringr)
 library(forcats)
 library(viridis)
 library(plotly)
+library(httr)
+library(jsonlite)
 
 ```
 
@@ -30,8 +32,42 @@ NYC Restaurant Inspection Data set possible questions/analyses:
 
 
 ```{r loading and cleaning }
-nyc_restaurant_inspections <- read_csv("../data_hw6/DOHMH_New_York_City_Restaurant_Inspection_Results.csv", col_names = TRUE) %>% 
-  rename(restaurant_id = camis, restaurant_name = dba) %>% 
+
+get_all_inspections <- function(url) {
+  
+  all_inspections = vector("list", length = 0)
+  
+  loop_index = 1
+  chunk_size = 50000
+  DO_NEXT = TRUE
+  
+  while (DO_NEXT) {
+    message("Getting data, page ", loop_index)
+    
+    all_inspections[[loop_index]] = 
+      GET(url,
+          query = list(`$order` = "zipcode",
+                       `$limit` = chunk_size,
+                       `$offset` = as.integer((loop_index - 1) * chunk_size)
+                       )
+          ) %>%
+      content("text") %>%
+      fromJSON() %>%
+      as_tibble()
+    
+    DO_NEXT = dim(all_inspections[[loop_index]])[1] == chunk_size
+    loop_index = loop_index + 1
+  }
+  
+  all_inspections
+  
+}
+
+url = "https://data.cityofnewyork.us/resource/9w7m-hzhe.json"
+
+nyc_inspections <- get_all_inspections(url) %>%
+  bind_rows() %>%
+  rename(restaurant_id = camis, restaurant_name = dba) %>%
   filter(is.na(grade) == FALSE)
 ```
 
