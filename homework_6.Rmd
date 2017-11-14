@@ -41,7 +41,6 @@ Create a flexdashboard using plotly for interactive graphics using one the follo
 
 Your dashboard should include at least three distinct plot types (e.g. scatterplots, line plots, bar plots, box plots, etc.). 
 
-
 ### Problem 2
 
 Create a shiny-enabled dashboard based on your work in Problem 1. Include at least two distinct widget types (e.g. slider inputs, drop-down menus, radio buttons, etc).

@@ -107,35 +107,33 @@ Column {data-width=350}
 ### Chart B
 
 ```{r}
-
  nyc_restaurant_inspections %>%
   filter(boro != "Missing") %>%
   group_by(zipcode) %>%
   mutate(num_restaurants_zip = n()) %>%
-  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
+  mutate(text_label = stringr::str_c("Zipcode:", zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
   plot_ly(y = ~num_restaurants_zip, color = ~boro, type = "box")
   
-
-#I want the hover label to indicate the zip code corresponding to the number of restaurants, not the boro name, since that is already known--not sure if changing the hover text is possible for box plots
-
-
-
-#This doesn't really work
 manhattan_zip<- nyc_restaurant_inspections %>%
   filter(boro == "MANHATTAN") %>%
   mutate(zipcode=as.character(zipcode)) %>%
   group_by(zipcode) %>%
   mutate(num_restaurants_man = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_man)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_man,color= ~boro, type = "scatter", mode = "marker", text = ~text_label) 
- 
+  plot_ly(x= ~zipcode, y = ~num_restaurants_man,color= ~boro, type = "scatter", mode = "marker", text = ~text_label) %>% 
+  layout(margin = list(b = 75))
+```
+
+
+For use in Shiny:
+```{r} 
  brooklyn_zip<- nyc_restaurant_inspections %>%
   filter(boro == "BROOKLYN") %>%
   mutate(zipcode=as.character(zipcode)) %>%
   group_by(zipcode) %>%
   mutate(num_restaurants_zip = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label) 
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)) 
  
  queens_zip<- nyc_restaurant_inspections %>%
   filter(boro == "QUEENS") %>%
@@ -143,7 +141,7 @@ manhattan_zip<- nyc_restaurant_inspections %>%
   group_by(zipcode) %>%
   mutate(num_restaurants_zip = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label))
  
  bronx_zip<- nyc_restaurant_inspections %>%
   filter(boro == "BRONX") %>%
@@ -151,7 +149,7 @@ manhattan_zip<- nyc_restaurant_inspections %>%
   group_by(zipcode) %>%
   mutate(num_restaurants_zip = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label))
  
  staten_zip<- nyc_restaurant_inspections %>%
   filter(boro == "STATEN ISLAND") %>%
@@ -159,12 +157,14 @@ manhattan_zip<- nyc_restaurant_inspections %>%
   group_by(zipcode) %>%
   mutate(num_restaurants_zip = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label))
  
- subplot(manhattan_zip, brooklyn_zip, queens_zip, bronx_zip, staten_zip, color = ~boro)
+ subplot(manhattan_zip, brooklyn_zip, queens_zip, bronx_zip, staten_zip)
 ```
 
 ### Chart C
+
+Distribution of scores within A-graded restaurants per boro/zip/whatever
 
 ```{r}
 
