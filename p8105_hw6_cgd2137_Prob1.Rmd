@@ -68,12 +68,12 @@ url = "https://data.cityofnewyork.us/resource/9w7m-hzhe.json"
 nyc_restaurant_inspections <- get_all_inspections(url) %>%
   bind_rows() %>%
   rename(restaurant_id = camis, restaurant_name = dba) %>%
+  mutate(cuisine_description = if_else(cuisine_description == "CafÃ©/Coffee/Tea", "Cafe/coffee", cuisine_description),
+         cuisine_description = if_else(cuisine_description == "Latin (Cuban, Dominican, Puerto Rican, South & Central American)", "Latin", cuisine_description)) %>% 
   filter(is.na(grade) == FALSE)
 ```
 
 Your dashboard should include at least three distinct plot types (e.g. scatterplots, line plots, bar plots, box plots, etc.).
-
-
 
 Column {data-width=650}
 -----------------------------------------------------------------------
@@ -84,16 +84,18 @@ Column {data-width=650}
 # put plotly code in these code chunks to specify the dashboard orientation/plots
 
 nyc_restaurant_inspections %>% 
-  filter(grade %in% c("A", "B", "C")) %>%
+  filter(grade %in% c("A", "B", "C")) %>% 
   select(cuisine_description, grade) %>%
   group_by(cuisine_description) %>%
   count(grade) %>%
   spread(key = grade, value = n) %>%
+  mutate(total = rowSums(cbind(A, B, C), na.rm = TRUE)) %>% 
+  filter(total >= 3000) %>% 
   plot_ly(x = ~cuisine_description, y = ~A, type = 'bar', name = 'A') %>%
   add_trace(y = ~B, name = 'B') %>%
   add_trace(y = ~C, name = 'C') %>%
   layout(yaxis = list(title = 'Count'), barmode = 'stack') %>% 
-  layout(xaxis = list(title = "", tickangle = 45)) # This line adjusts the angle of the x-axis labels by 45 degrees
+  layout(margin = list(b = 75), xaxis = list(title = "", tickangle = 45)) # `margin` adjusts the space for the x-axis labels
 
 
 #How can we improve the axis labels?--hard to read 
