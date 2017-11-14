@@ -98,7 +98,7 @@ nyc_restaurant_inspections %>%
   layout(margin = list(b = 75), xaxis = list(title = "", tickangle = 45)) # `margin` adjusts the space for the x-axis labels
 
 
-#How can we improve the axis labels?--hard to read 
+
 ```
 
 Column {data-width=350}
@@ -161,7 +161,7 @@ manhattan_zip<- nyc_restaurant_inspections %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
   plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)
  
- subplot(manhattan_zip, brooklyn_zip, queens_zip, bronx_zip, staten_zip, color = ~boro)
+ subplot(manhattan_zip, brooklyn_zip, queens_zip, bronx_zip, staten_zip)
 ```
 
 ### Chart C
