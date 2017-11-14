@@ -1,0 +1,134 @@
+---
+title: "p8105_hw6_Prob1"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+
+library(flexdashboard)
+library(tidyverse)
+library(janitor)
+library(stringr)
+library(forcats)
+library(viridis)
+library(plotly)
+
+```
+
+NYC Restaurant Inspection Data set possible questions/analyses:
+
+* Does restaurant grade distribution vary across boroughs? 
+
+* Do restaurant types vary across boroughs? 
+
+* How do restaurant grade/inspections vary across types of restaurants? 
+
+* What types of violations are most/least common? (how does this vary across grades?)
+
+
+```{r loading and cleaning }
+nyc_restaurant_inspections <- read_csv("../data_hw6/DOHMH_New_York_City_Restaurant_Inspection_Results.csv", col_names = TRUE) %>% 
+  rename(restaurant_id = camis, restaurant_name = dba) %>% 
+  filter(is.na(grade) == FALSE)
+```
+
+Your dashboard should include at least three distinct plot types (e.g. scatterplots, line plots, bar plots, box plots, etc.).
+
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+# put plotly code in these code chunks to specify the dashboard orientation/plots
+
+nyc_restaurant_inspections %>% 
+  filter(grade %in% c("A", "B", "C")) %>%
+  select(cuisine_description, grade) %>%
+  group_by(cuisine_description) %>%
+  count(grade) %>%
+  spread(key = grade, value = n) %>%
+  plot_ly(x = ~cuisine_description, y = ~A, type = 'bar', name = 'A') %>%
+  add_trace(y = ~B, name = 'B') %>%
+  layout(yaxis = list(title = 'Count'), barmode = 'stack') %>%
+  add_trace(y = ~C, name = 'C') %>%
+  layout(yaxis = list(title = 'Count'), barmode = 'stack')
+
+
+#How can we improve the axis labels?--hard to read 
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+ nyc_restaurant_inspections %>%
+  filter(boro != "Missing") %>%
+  group_by(zipcode) %>%
+  mutate(num_restaurants_zip = n()) %>%
+  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
+  plot_ly(y = ~num_restaurants_zip, color = ~boro, type = "box")
+  
+
+#I want the hover label to indicate the zip code corresponding to the number of restaurants, not the boro name, since that is already known--not sure if changing the hover text is possible for box plots
+
+
+
+#This doesn't really work
+manhattan_zip<- nyc_restaurant_inspections %>%
+  filter(boro == "MANHATTAN") %>%
+  mutate(zipcode=as.character(zipcode)) %>%
+  group_by(zipcode) %>%
+  mutate(num_restaurants_man = n()) %>%
+  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_man)) %>%
+  plot_ly(x= ~zipcode, y = ~num_restaurants_man,color= ~boro, type = "scatter", mode = "marker", text = ~text_label) 
+ 
+ brooklyn_zip<- nyc_restaurant_inspections %>%
+  filter(boro == "BROOKLYN") %>%
+  mutate(zipcode=as.character(zipcode)) %>%
+  group_by(zipcode) %>%
+  mutate(num_restaurants_zip = n()) %>%
+  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label) 
+ 
+ queens_zip<- nyc_restaurant_inspections %>%
+  filter(boro == "QUEENS") %>%
+  mutate(zipcode=as.character(zipcode)) %>%
+  group_by(zipcode) %>%
+  mutate(num_restaurants_zip = n()) %>%
+  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)
+ 
+ bronx_zip<- nyc_restaurant_inspections %>%
+  filter(boro == "BRONX") %>%
+  mutate(zipcode=as.character(zipcode)) %>%
+  group_by(zipcode) %>%
+  mutate(num_restaurants_zip = n()) %>%
+  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)
+ 
+ staten_zip<- nyc_restaurant_inspections %>%
+  filter(boro == "STATEN ISLAND") %>%
+  mutate(zipcode=as.character(zipcode)) %>%
+  group_by(zipcode) %>%
+  mutate(num_restaurants_zip = n()) %>%
+  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)
+ 
+ subplot(manhattan_zip, brooklyn_zip, queens_zip, bronx_zip, staten_zip, color = ~boro)
+```
+
+### Chart C
+
+```{r}
+
+```
+
