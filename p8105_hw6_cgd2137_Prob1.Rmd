@@ -81,8 +81,6 @@ Column {data-width=650}
 ### Chart A
 
 ```{r}
-# put plotly code in these code chunks to specify the dashboard orientation/plots
-
 nyc_restaurant_inspections %>% 
   filter(grade %in% c("A", "B", "C")) %>% 
   select(cuisine_description, grade) %>%
@@ -111,7 +109,7 @@ Column {data-width=350}
   mutate(text_label = stringr::str_c("Zipcode:", zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
   plot_ly(y = ~num_restaurants_zip, color = ~boro, type = "box")
   
-manhattan_zip<- nyc_restaurant_inspections %>%
+  nyc_restaurant_inspections %>%
   filter(boro == "MANHATTAN") %>%
   mutate(zipcode=as.character(zipcode)) %>%
   group_by(zipcode) %>%
@@ -121,43 +119,6 @@ manhattan_zip<- nyc_restaurant_inspections %>%
   layout(margin = list(b = 75))
 ```
 
-
-For use in Shiny:
-```{r} 
- brooklyn_zip<- nyc_restaurant_inspections %>%
-  filter(boro == "BROOKLYN") %>%
-  mutate(zipcode=as.character(zipcode)) %>%
-  group_by(zipcode) %>%
-  mutate(num_restaurants_zip = n()) %>%
-  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color = ~boro, type = "scatter", mode = "marker", text = ~text_label) 
- 
- queens_zip<- nyc_restaurant_inspections %>%
-  filter(boro == "QUEENS") %>%
-  mutate(zipcode=as.character(zipcode)) %>%
-  group_by(zipcode) %>%
-  mutate(num_restaurants_zip = n()) %>%
-  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color = ~boro, type = "scatter", mode = "marker", text = ~text_label)
- 
- bronx_zip<- nyc_restaurant_inspections %>%
-  filter(boro == "BRONX") %>%
-  mutate(zipcode=as.character(zipcode)) %>%
-  group_by(zipcode) %>%
-  mutate(num_restaurants_zip = n()) %>%
-  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color = ~boro, type = "scatter", mode = "marker", text = ~text_label)
- 
- staten_zip<- nyc_restaurant_inspections %>%
-  filter(boro == "STATEN ISLAND") %>%
-  mutate(zipcode=as.character(zipcode)) %>%
-  group_by(zipcode) %>%
-  mutate(num_restaurants_zip = n()) %>%
-  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)
- 
- subplot(manhattan_zip, brooklyn_zip, queens_zip, bronx_zip, staten_zip)
-```
 
 ### Chart C
 
@@ -170,6 +131,21 @@ C = 28+
 Grades seem off - Need to re-grade based on score
 
 ```{r}
+
+#Plotly
+nyc_restaurant_inspections %>% 
+  mutate(score = as.numeric(score),
+         grade_new = case_when(
+           score < 14 ~ "A",
+           score >= 14 & score < 28 ~ "B",
+           score >= 28 ~ "C")) %>% 
+  filter(grade_new == "A", boro != "Missing", score > 0 ) %>% 
+  drop_na() %>% 
+  plot_ly(y = ~score, color = ~boro, type = "box")
+
+
+
+
 nyc_restaurant_inspections %>% 
   mutate(score = as.numeric(score),
          grade_new = case_when(
@@ -180,6 +156,12 @@ nyc_restaurant_inspections %>%
   drop_na() %>% 
   ggplot(aes(x = boro, y = score)) +
   geom_violin()
+
+
+
+
+
+
 ```
 
 

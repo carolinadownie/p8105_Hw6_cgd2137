@@ -1,0 +1,120 @@
+---
+title: "p8105_hw6_cgd2137"
+author: "Carolina Downie"
+date: "11/15/2017"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(janitor)
+library(stringr)
+library(forcats)
+library(viridis)
+library(plotly)
+library(shiny)
+library(httr)
+library(jsonlite)
+```
+
+```{r loading and cleaning restaurant inspection data}
+
+get_all_inspections <- function(url) {
+  
+  all_inspections = vector("list", length = 0)
+  
+  loop_index = 1
+  chunk_size = 50000
+  DO_NEXT = TRUE
+  
+  while (DO_NEXT) {
+    message("Getting data, page ", loop_index)
+    
+    all_inspections[[loop_index]] = 
+      GET(url,
+          query = list(`$order` = "zipcode",
+                       `$limit` = chunk_size,
+                       `$offset` = as.integer((loop_index - 1) * chunk_size)
+                       )
+          ) %>%
+      content("text") %>%
+      fromJSON() %>%
+      as_tibble()
+    
+    DO_NEXT = dim(all_inspections[[loop_index]])[1] == chunk_size
+    loop_index = loop_index + 1
+  }
+  
+  all_inspections
+  
+}
+
+url = "https://data.cityofnewyork.us/resource/9w7m-hzhe.json"
+
+nyc_restaurant_inspections <- get_all_inspections(url) %>%
+  bind_rows() %>%
+  rename(restaurant_id = camis, restaurant_name = dba) %>%
+  mutate(cuisine_description = if_else(cuisine_description == "CafÃ©/Coffee/Tea", "Cafe/coffee", cuisine_description),
+         cuisine_description = if_else(cuisine_description == "Latin (Cuban, Dominican, Puerto Rican, South & Central American)", "Latin", cuisine_description)) %>% 
+  filter(is.na(grade) == FALSE)
+```
+
+
+
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+```{r plot of num_restaurants by zip_code for each borough}
+
+boros <- nyc_restaurant_inspections %>% 
+  filter(boro != "Missing") %>%
+  distinct(boro) %>% pull()
+
+# selectInput widget
+selectInput("boro_choice", label = h3("Select Borough"),
+            choices = boros, selected = "MANHATTAN")
+
+  
+```
+
+
+Row
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+
+renderPlotly({ 
+  nyc_restaurant_inspections %>%
+  filter(boro == input$boro_choice) %>%
+  mutate(zipcode=as.character(zipcode)) %>%
+  group_by(zipcode) %>%
+  mutate(num_restaurants = n()) %>%
+  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants)) %>%
+  plot_ly(x= ~zipcode, y = ~num_restaurants,color= ~boro, type = "scatter", mode = "marker", text = ~text_label) %>% 
+  layout(title = "Number of restaurants per zip code", margin = list(b = 75)) 
+})
+
+
+
+```
+
+Row {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```
+
