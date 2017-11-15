@@ -171,12 +171,15 @@ Grades seem off - Need to re-grade based on score
 
 ```{r}
 nyc_restaurant_inspections %>% 
-  select(boro, zipcode, score, grade) %>% 
-  mutate(score = as.numeric(score)) %>% 
-  filter(grade == "A") %>% 
+  mutate(score = as.numeric(score),
+         grade_new = case_when(
+           score < 14 ~ "A",
+           score >= 14 & score < 28 ~ "B",
+           score >= 28 ~ "C")) %>% 
+  filter(grade_new == "A") %>% 
   drop_na() %>% 
   ggplot(aes(x = boro, y = score)) +
-  geom_boxplot()
+  geom_violin()
 ```
 
 
