@@ -95,10 +95,7 @@ nyc_restaurant_inspections %>%
   add_trace(y = ~B, name = 'B') %>%
   add_trace(y = ~C, name = 'C') %>%
   layout(yaxis = list(title = 'Count'), barmode = 'stack') %>% 
-  layout(margin = list(b = 75), xaxis = list(title = "", tickangle = 45)) # `margin` adjusts the space for the x-axis labels
-
-
-
+  layout(margin = list(b = 75), xaxis = list(title = "", tickangle = 45))
 ```
 
 Column {data-width=350}
@@ -133,7 +130,7 @@ For use in Shiny:
   group_by(zipcode) %>%
   mutate(num_restaurants_zip = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)) 
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color = ~boro, type = "scatter", mode = "marker", text = ~text_label) 
  
  queens_zip<- nyc_restaurant_inspections %>%
   filter(boro == "QUEENS") %>%
@@ -141,7 +138,7 @@ For use in Shiny:
   group_by(zipcode) %>%
   mutate(num_restaurants_zip = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label))
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color = ~boro, type = "scatter", mode = "marker", text = ~text_label)
  
  bronx_zip<- nyc_restaurant_inspections %>%
   filter(boro == "BRONX") %>%
@@ -149,7 +146,7 @@ For use in Shiny:
   group_by(zipcode) %>%
   mutate(num_restaurants_zip = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label))
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color = ~boro, type = "scatter", mode = "marker", text = ~text_label)
  
  staten_zip<- nyc_restaurant_inspections %>%
   filter(boro == "STATEN ISLAND") %>%
@@ -157,7 +154,7 @@ For use in Shiny:
   group_by(zipcode) %>%
   mutate(num_restaurants_zip = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_zip)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label))
+  plot_ly(x= ~zipcode, y = ~num_restaurants_zip,color= ~boro, type = "scatter", mode = "marker", text = ~text_label)
  
  subplot(manhattan_zip, brooklyn_zip, queens_zip, bronx_zip, staten_zip)
 ```
@@ -166,7 +163,30 @@ For use in Shiny:
 
 Distribution of scores within A-graded restaurants per boro/zip/whatever
 
-```{r}
+A = 0-13
+B = 14-27
+C = 28+
 
+Grades seem off - Need to re-grade based on score
+
+```{r}
+nyc_restaurant_inspections %>% 
+  select(boro, zipcode, score, grade) %>% 
+  mutate(score = as.numeric(score)) %>% 
+  filter(grade == "A") %>% 
+  drop_na() %>% 
+  ggplot(aes(x = boro, y = score)) +
+  geom_boxplot()
 ```
+
+
+
+
+
+
+
+
+
+
+
 
