@@ -19,3 +19,14 @@ Our first chart represents the count of restaurants receiving grades of A, B, an
 Our second plot examines the number of restaurants in each zip code in Manhattan. It's clear that there is an unequal distribution, with some zipcodes containing several thousand restaurant, while others only contain several dozen.
 
 Our third plot looks at the distribution of scores within restaurants that received an A grade, by borough. Since a restaurant can receive up to 9 points (more points is worse), not all A's are created equal. 
+
+
+
+
+ https://carolinadownie.shinyapps.io/p8105_hw6_cgd2137_prob2/
+ 
+ 
+
+
+
+
