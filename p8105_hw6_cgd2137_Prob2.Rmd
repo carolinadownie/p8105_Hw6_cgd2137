@@ -58,6 +58,11 @@ nyc_restaurant_inspections <- get_all_inspections(url) %>%
   rename(restaurant_id = camis, restaurant_name = dba) %>%
   mutate(cuisine_description = if_else(cuisine_description == "CafÃ©/Coffee/Tea", "Cafe/coffee", cuisine_description),
          cuisine_description = if_else(cuisine_description == "Latin (Cuban, Dominican, Puerto Rican, South & Central American)", "Latin", cuisine_description)) %>% 
+  mutate(score = as.numeric(score),
+         grade_new = case_when(
+           score < 14 ~ "A",
+           score >= 14 & score < 28 ~ "B",
+           score >= 28 ~ "C")) %>% 
   filter(is.na(grade) == FALSE)
 ```
 
@@ -98,11 +103,11 @@ Row
 renderPlotly({ 
   nyc_restaurant_inspections %>%
   filter(boro == input$boro_choice) %>%
-  mutate(zipcode=as.character(zipcode)) %>%
+  mutate(zipcode = as.character(zipcode)) %>%
   group_by(zipcode) %>%
   mutate(num_restaurants = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants,color= ~boro, type = "scatter", mode = "marker", text = ~text_label) %>% 
+  plot_ly(x = ~zipcode, y = ~num_restaurants,color = ~boro, type = "scatter", mode = "marker", text = ~text_label) %>% 
   layout(title = "Number of restaurants per zip code", margin = list(b = 75)) 
 })
 

@@ -1,13 +1,9 @@
-name: "Yay internet!"
+name: "DSI - Homework 6"
 output_dir: "."
 navbar:
   title: "Home"
   right:
-    - text: "About"
-      href: about.html
-    - icon: fa-envelope fa-lg
-      href: mailto:<you@youremail.com>
     - icon: fa-github fa-lg
-      href: http://github.com/<YOUR_GH_NAME>/
+      href: https://github.com/carolinadownie/p8105_hw6_cgd2137
 output:
   html_document
