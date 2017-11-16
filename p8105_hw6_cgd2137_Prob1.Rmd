@@ -70,6 +70,11 @@ nyc_restaurant_inspections <- get_all_inspections(url) %>%
   rename(restaurant_id = camis, restaurant_name = dba) %>%
   mutate(cuisine_description = if_else(cuisine_description == "CafÃ©/Coffee/Tea", "Cafe/coffee", cuisine_description),
          cuisine_description = if_else(cuisine_description == "Latin (Cuban, Dominican, Puerto Rican, South & Central American)", "Latin", cuisine_description)) %>% 
+  mutate(score = as.numeric(score),
+         grade_new = case_when(
+           score < 14 ~ "A",
+           score >= 14 & score < 28 ~ "B",
+           score >= 28 ~ "C")) %>% 
   filter(is.na(grade) == FALSE)
 ```
 
@@ -82,11 +87,11 @@ Column {data-width=650}
 
 ```{r}
 nyc_restaurant_inspections %>% 
-  filter(grade %in% c("A", "B", "C")) %>% 
-  select(cuisine_description, grade) %>%
+  filter(grade_new %in% c("A", "B", "C")) %>% 
+  select(cuisine_description, grade_new) %>%
   group_by(cuisine_description) %>%
-  count(grade) %>%
-  spread(key = grade, value = n) %>%
+  count(grade_new) %>%
+  spread(key = grade_new, value = n) %>%
   mutate(total = rowSums(cbind(A, B, C), na.rm = TRUE)) %>% 
   filter(total >= 3000) %>% 
   plot_ly(x = ~cuisine_description, y = ~A, type = 'bar', name = 'A') %>%
@@ -134,34 +139,9 @@ Grades seem off - Need to re-grade based on score
 
 #Plotly
 nyc_restaurant_inspections %>% 
-  mutate(score = as.numeric(score),
-         grade_new = case_when(
-           score < 14 ~ "A",
-           score >= 14 & score < 28 ~ "B",
-           score >= 28 ~ "C")) %>% 
   filter(grade_new == "A", boro != "Missing", score > 0 ) %>% 
   drop_na() %>% 
   plot_ly(y = ~score, color = ~boro, type = "box")
-
-
-
-
-nyc_restaurant_inspections %>% 
-  mutate(score = as.numeric(score),
-         grade_new = case_when(
-           score < 14 ~ "A",
-           score >= 14 & score < 28 ~ "B",
-           score >= 28 ~ "C")) %>% 
-  filter(grade_new == "A") %>% 
-  drop_na() %>% 
-  ggplot(aes(x = boro, y = score)) +
-  geom_violin()
-
-
-
-
-
-
 ```
 
 

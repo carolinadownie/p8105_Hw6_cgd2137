@@ -1,0 +1,8 @@
+---
+title: "DSI - Homework 6"
+---
+
+### Learning to use Plotly and Shiny with NYC Restaurant Inspection Data
+
+For this assignment we chose to analyze data from the NYC Restaurant Inspection Dataset, which details inspection results for nearly 200,000 restaurants in all five boroughs of New York City. Because this dataset is updated frequently, we used code that accesses the API from NYC Open Data. 
+
