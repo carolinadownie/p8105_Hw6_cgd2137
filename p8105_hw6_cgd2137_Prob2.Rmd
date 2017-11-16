@@ -2,7 +2,10 @@
 title: "p8105_hw6_cgd2137"
 author: "Carolina Downie"
 date: "11/15/2017"
-output: html_document
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
 runtime: shiny
 ---
 
@@ -63,7 +66,7 @@ nyc_restaurant_inspections <- get_all_inspections(url) %>%
            score < 14 ~ "A",
            score >= 14 & score < 28 ~ "B",
            score >= 28 ~ "C")) %>% 
-  filter(is.na(grade) == FALSE)
+  filter(is.na(grade_new) == FALSE)
 ```
 
 
@@ -81,8 +84,16 @@ boros <- nyc_restaurant_inspections %>%
 # selectInput widget
 selectInput("boro_choice", label = h3("Select Borough"),
             choices = boros, selected = "MANHATTAN")
+
+grade_choice <- nyc_restaurant_inspections %>% distinct(grade_new) %>% pull()
+
+# radioButtons widget
+radioButtons("grade_choice", label = h3("Choose letter grade"),
+    choices = grade_choice, 
+    selected = "A")
   
 ```
+
 
 
 Row
@@ -100,7 +111,7 @@ renderPlotly({
   mutate(num_restaurants = n()) %>%
   mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants)) %>%
   plot_ly(x = ~zipcode, y = ~num_restaurants,color = ~boro, type = "scatter", mode = "marker", text = ~text_label) %>% 
-  layout(title = "Number of restaurants per zip code", margin = list(b = 75)) 
+  layout(title = "Number of restaurants per zip code, by borough", margin = list(b = 75)) 
 })
 
 
@@ -109,20 +120,6 @@ renderPlotly({
 
 Row {.tabset .tabset-fade}
 -----------------------------------------------------------------------
-
-Column {.sidebar}
------------------------------------------------------------------------
-
-```{r }
-
-grade_choice <- nyc_restaurant_inspections %>% distinct(grade_new) %>% pull()
-
-# radioButtons widget
-radioButtons("grade_choice", label = h3("Choose letter grade"),
-    choices = grade_choice, 
-    selected = "A")
-  
-```
 
 
 ### Chart B
@@ -133,14 +130,9 @@ renderPlotly({
   nyc_restaurant_inspections %>% 
   filter(boro !="Missing", grade_new == input$grade_choice, score > 0 ) %>% 
   drop_na() %>% 
-  plot_ly(y = ~score, color = ~boro, type = "box")
+  plot_ly(y = ~score, color = ~boro, type = "box") %>%
+  layout(title = "Distribution of scores within grade, by borough", margin = list(b = 100))
 })
-
 ```
 
-### Chart C
-
-```{r}
-
-```
 
