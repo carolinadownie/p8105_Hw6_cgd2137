@@ -116,24 +116,16 @@ Column {data-width=350}
   
   nyc_restaurant_inspections %>%
   filter(boro == "MANHATTAN") %>%
-  mutate(zipcode=as.character(zipcode)) %>%
+  mutate(zipcode = as.character(zipcode)) %>%
   group_by(zipcode) %>%
   mutate(num_restaurants_man = n()) %>%
-  mutate(text_label = stringr::str_c("Zipcode:",zipcode, " Num_restaurants:", num_restaurants_man)) %>%
-  plot_ly(x= ~zipcode, y = ~num_restaurants_man,color= ~boro, type = "scatter", mode = "marker", text = ~text_label) %>% 
+  mutate(text_label = stringr::str_c("Zipcode:", zipcode, " Num_restaurants:", num_restaurants_man)) %>%
+  plot_ly(x = ~zipcode, y = ~num_restaurants_man,color = ~boro, type = "scatter", mode = "marker", text = ~text_label) %>% 
   layout(margin = list(b = 75))
 ```
 
 
 ### Chart C
-
-Distribution of scores within A-graded restaurants per boro/zip/whatever
-
-A = 0-13
-B = 14-27
-C = 28+
-
-Grades seem off - Need to re-grade based on score
 
 ```{r}
 
