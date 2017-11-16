@@ -77,6 +77,13 @@ boros <- nyc_restaurant_inspections %>%
 selectInput("boro_choice", label = h3("Select Borough"),
             choices = boros, selected = "MANHATTAN")
 
+grade_choice <- nyc_restaurant_inspections %>% distinct(grade_new) %>% pull()
+
+# radioButtons widget
+radioButtons("grade_choice", label = h3("Choose letter grade"),
+    choices = grade_choice, 
+    selected = "A")
+
   
 ```
 
@@ -109,6 +116,13 @@ Row {.tabset .tabset-fade}
 ### Chart B
 
 ```{r}
+
+renderPlotly({
+  nyc_restaurant_inspections %>% 
+  filter(grade_new == input$grade_choice, score > 0 ) %>% 
+  drop_na() %>% 
+  plot_ly(y = ~score, color = ~boro, type = "box")
+})
 
 ```
 

@@ -142,6 +142,7 @@ nyc_restaurant_inspections %>%
   filter(grade_new == "A", boro != "Missing", score > 0 ) %>% 
   drop_na() %>% 
   plot_ly(y = ~score, color = ~boro, type = "box")
+
 ```
 
 
