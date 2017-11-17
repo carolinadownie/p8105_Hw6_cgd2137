@@ -70,7 +70,6 @@ nyc_restaurant_inspections <- get_all_inspections(url) %>%
 
 Column {data-width=350}
 -----------------------------------------------------------------------
-
 ### Chart A
 
 ```{r}

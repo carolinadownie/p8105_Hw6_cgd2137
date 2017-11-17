@@ -1,0 +1,35 @@
+---
+title: "DSI - Homework 6"
+---
+
+### Learning to use Plotly and Shiny with NYC Restaurant Inspection Data
+
+For this assignment we chose to analyze data from the NYC Restaurant Inspection Dataset, which details inspection results for nearly 200,000 restaurants in all five boroughs of New York City. Because this dataset is updated frequently, we used code that accesses the API from NYC Open Data. The GitHub repository where theses analyses are stored can be found [here](https://github.com/carolinadownie/p8105_hw6_cgd2137).
+
+Beyond basic cleaning steps to make the dataset more readable, we also noticed that many of the given grades didn't match with the reported scores. According to the NYC Department of [Health](how-we-score-grade.pdf) (PDF), grades are given based on the score received according to the following schema:
+
+  * A: 0-13 points
+  * B: 14-27 points
+  * C: 28+ points
+  
+We created a new variable with grades based on the value of the score column and subsequently used that variable in our analyses.
+
+#Plotly Dashboard
+Our Plotly flexdashboard can be viewed [here](p8105_hw6_cgd2137_Prob1.html). 
+
+Our first chart represents the count of restaurants receiving grades of A, B, and C within cuisine categories that have over 3,000 restaurants. Perhaps unsurprisingly, the top two cuisine types represented in NYC are American and, in a distant second, Chinese. Most restaurants of all cuisine types received an A grade, with very few receiving a C.
+
+Our second plot examines the number of restaurants in each zip code in Manhattan. It's clear that there is an unequal distribution, with some zipcodes containing several thousand restaurants, while others only contain several dozen.
+
+Our third plot looks at the distribution of scores within restaurants that received an A grade, by borough. Since a restaurant can receive up to 9 points (more points is worse), not all A's are created equal. 
+
+#Shiny app dashboard
+ Our shiny dashboard is [here](https://carolinadownie.shinyapps.io/p8105_hw6_cgd2137_prob2/)
+ 
+For our first plot, we extended the number of restaurants per zip code plot from Plotly so that viewers can view the number of restaurants per zip code in any of the 5 boroughs, not just Manhattan. 
+
+For our second plot, we extended the distribution of scores within a grade plot so that viewers can view the distribution of scores for A, B, or C grades. 
+
+
+
+
