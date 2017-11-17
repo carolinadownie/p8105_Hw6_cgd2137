@@ -1,0 +1,132 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+
+library(flexdashboard)
+library(tidyverse)
+library(janitor)
+library(stringr)
+library(forcats)
+library(viridis)
+library(plotly)
+library(httr)
+library(jsonlite)
+
+```
+
+```{r loading and cleaning, cache = TRUE }
+
+get_all_inspections <- function(url) {
+  
+  all_inspections = vector("list", length = 0)
+  
+  loop_index = 1
+  chunk_size = 50000
+  DO_NEXT = TRUE
+  
+  while (DO_NEXT) {
+    message("Getting data, page ", loop_index)
+    
+    all_inspections[[loop_index]] = 
+      GET(url,
+          query = list(`$order` = "zipcode",
+                       `$limit` = chunk_size,
+                       `$offset` = as.integer((loop_index - 1) * chunk_size)
+                       )
+          ) %>%
+      content("text") %>%
+      fromJSON() %>%
+      as_tibble()
+    
+    DO_NEXT = dim(all_inspections[[loop_index]])[1] == chunk_size
+    loop_index = loop_index + 1
+  }
+  
+  all_inspections
+  
+}
+
+url = "https://data.cityofnewyork.us/resource/9w7m-hzhe.json"
+
+nyc_restaurant_inspections <- get_all_inspections(url) %>%
+  bind_rows() %>%
+  rename(restaurant_id = camis, restaurant_name = dba) %>%
+  mutate(cuisine_description = if_else(cuisine_description == "CafÃ©/Coffee/Tea", "Cafe/coffee", cuisine_description),
+         cuisine_description = if_else(cuisine_description == "Latin (Cuban, Dominican, Puerto Rican, South & Central American)", "Latin", cuisine_description)) %>% 
+  mutate(score = as.numeric(score),
+         grade_new = case_when(
+           score < 14 ~ "A",
+           score >= 14 & score < 28 ~ "B",
+           score >= 28 ~ "C")) %>% 
+  filter(is.na(grade) == FALSE)
+```
+
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+### Chart A
+
+```{r}
+nyc_restaurant_inspections %>% 
+  filter(grade_new %in% c("A", "B", "C")) %>% 
+  select(cuisine_description, grade_new) %>%
+  group_by(cuisine_description) %>%
+  count(grade_new) %>%
+  spread(key = grade_new, value = n) %>%
+  mutate(total = rowSums(cbind(A, B, C), na.rm = TRUE)) %>% 
+  filter(total >= 3000) %>% 
+  plot_ly(x = ~cuisine_description, y = ~A, type = 'bar', name = 'A') %>%
+  add_trace(y = ~B, name = 'B') %>%
+  add_trace(y = ~C, name = 'C') %>%
+  layout(yaxis = list(title = 'Count'), barmode = 'stack') %>% 
+  layout(title = "Count of restaurant grades by cuisine type",margin = list(b = 75), xaxis = list(title = "", tickangle = 45))
+
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+ 
+  nyc_restaurant_inspections %>%
+  filter(boro == "MANHATTAN") %>%
+  mutate(zipcode = as.character(zipcode)) %>%
+  group_by(zipcode) %>%
+  mutate(num_restaurants_man = n()) %>%
+  mutate(text_label = stringr::str_c("Zipcode:", zipcode, " Num_restaurants:", num_restaurants_man)) %>%
+  plot_ly(x = ~zipcode, y = ~num_restaurants_man,color = ~boro, type = "scatter", mode = "marker", text = ~text_label) %>% 
+  layout(title = "Count of restaurants in each zip code in Manhattan", margin = list(b = 75))
+```
+
+### Chart C
+
+```{r}
+
+#Plotly
+nyc_restaurant_inspections %>% 
+  filter(grade_new == "A", boro != "Missing", score > 0 ) %>% 
+  drop_na() %>% 
+  plot_ly(y = ~score, color = ~boro, type = "box") %>%
+  layout(title = "Distribution of scores within A-graded restaurants, by borough")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+

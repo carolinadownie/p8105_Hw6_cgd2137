@@ -15,7 +15,7 @@ Beyond basic cleaning steps to make the dataset more readable, we also noticed t
 We created a new variable with grades based on the value of the score column and subsequently used that variable in our analyses.
 
 #Plotly Dashboard
-Our Plotly flexdashboard can be viewed [here](p8105_hw6_cgd2137_Prob1.html). 
+Our Plotly flexdashboard can be viewed [here](Plotly.html) 
 
 Our first chart represents the count of restaurants receiving grades of A, B, and C within cuisine categories that have over 3,000 restaurants. Perhaps unsurprisingly, the top two cuisine types represented in NYC are American and, in a distant second, Chinese. Most restaurants of all cuisine types received an A grade, with very few receiving a C.
 
