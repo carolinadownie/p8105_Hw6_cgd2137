@@ -1,0 +1,9 @@
+---
+title: "p8105_hw6_cgd2137"
+authors: "Carolina Downie (UNI:cgd2137) and Nick Pantaleo (UNI: np2582)"
+date: "11/16/2017"
+output: html_document
+---
+
+The website we produced for this homework assignment is [here](https://carolinadownie.github.io/p8105_hw6_cgd2137/). 
+
